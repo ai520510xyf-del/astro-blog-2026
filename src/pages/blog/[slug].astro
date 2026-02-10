@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { Fragment } from 'astro/jsx-runtime';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formatDate = (date: Date) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+// Get all posts for navigation
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts
+  .filter(p => !p.data.draft)
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDate || a.data.date);
+    const dateB = new Date(b.data.pubDate || b.data.date);
+    return dateB.valueOf() - dateA.valueOf();
+  });
+
+const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
+const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+---
+
+<Layout title={`${post.data.title} - Astro Blog`} description={post.data.description}>
+  <article class="py-16 sm:py-24">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <header class="mb-12">
+        <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <time datetime={(post.data.pubDate || post.data.date)?.toISOString()}>
+            {formatDate(post.data.pubDate || post.data.date)}
+          </time>
+          {post.data.readingTime && (
+            <Fragment>
+              <span>•</span>
+              <span>{post.data.readingTime}</span>
+            </Fragment>
+          )}
+        </div>
+
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl mb-4">
+          {post.data.title}
+        </h1>
+
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-6">
+          {post.data.description}
+        </p>
+
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map((tag) => (
+              <span class="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/20 px-3 py-1 text-sm font-medium text-primary-700 dark:text-primary-300">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </header>
+
+      <!-- Content -->
+      <div class="prose dark:prose-invert max-w-none">
+        <Content />
+      </div>
+
+      <!-- Navigation -->
+      <nav class="mt-16 flex justify-between gap-4 border-t border-gray-200 dark:border-gray-800 pt-8">
+        {prevPost ? (
+          <a
+            href={`/blog/${prevPost.slug}`}
+            class="flex-1 rounded-lg border border-gray-200 dark:border-gray-800 p-6 text-left hover:border-primary-600 dark:hover:border-primary-400 transition-colors"
+          >
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Previous</p>
+            <p class="font-semibold text-gray-900 dark:text-gray-100">{prevPost.data.title}</p>
+          </a>
+        ) : (
+          <div class="flex-1"></div>
+        )}
+
+        {nextPost ? (
+          <a
+            href={`/blog/${nextPost.slug}`}
+            class="flex-1 rounded-lg border border-gray-200 dark:border-gray-800 p-6 text-right hover:border-primary-600 dark:hover:border-primary-400 transition-colors"
+          >
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Next</p>
+            <p class="font-semibold text-gray-900 dark:text-gray-100">{nextPost.data.title}</p>
+          </a>
+        ) : (
+          <div class="flex-1"></div>
+        )}
+      </nav>
+    </div>
+  </article>
+</Layout>

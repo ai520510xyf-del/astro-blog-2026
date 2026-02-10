@@ -1,0 +1,33 @@
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  integrations: [mdx(), react(), tailwind(), sitemap()],
+  site: import.meta.env.SITE_URL || 'https://your-domain.com',
+  base: import.meta.env.BASE_PATH || '/',
+  build: {
+    format: 'directory',
+  },
+  vite: {
+    build: {
+      cssMinify: 'esbuild',
+      minify: 'esbuild',
+    },
+  },
+  markdown: {
+    remarkPlugins: ['remark-gfm'],
+    rehypePlugins: [
+      'rehype-slug',
+      'rehype-autolink-headings',
+      'rehype-highlight',
+    ],
+    shikiConfig: {
+      theme: 'github-dark',
+      langs: ['javascript', 'typescript', 'python', 'bash', 'css', 'html', 'json', 'jsx', 'tsx'],
+    },
+  },
+  compressHTML: true,
+});

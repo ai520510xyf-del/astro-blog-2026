@@ -1,0 +1,344 @@
+---
+interface Props {
+  threshold?: number;
+  speed?: number;
+  size?: number;
+  icon?: string;
+  iconSize?: number;
+  className?: string;
+  style?: string;
+  visibleClassName?: string;
+  hiddenClassName?: string;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  offset?: number;
+  animationDuration?: number;
+}
+
+const { 
+  threshold = 300,
+  speed = 800,
+  size = 48,
+  icon = '↑',
+  iconSize = 20,
+  className = '',
+  style = '',
+  visibleClassName = '',
+  hiddenClassName = '',
+  position = 'bottom-right',
+  offset = 20,
+  animationDuration = 300 
+} = Astro.props;
+---
+
+<div class="back-to-top-container">
+  <button
+    id="back-to-top"
+    class={`back-to-btn ${hiddenClassName}`}
+    style={{
+      width: `${size}px`,
+      height: `${size}px`,
+      '--icon-size': `${iconSize}px`,
+      '--animation-duration': `${animationDuration}ms`,
+      '--offset': `${offset}px`,
+      ...style.split(';').reduce((acc: any, item: string) => {
+        if (item.trim()) {
+          const [key, value] = item.split(':');
+          if (key && value) {
+            acc[key.trim()] = value.trim();
+          }
+        }
+        return acc;
+      }, {})
+    }}
+    data-threshold={threshold}
+    data-speed={speed}
+  >
+    <span class="back-to-icon" style={{ fontSize: `var(--icon-size)` }}>{icon}</span>
+  </button>
+</div>
+
+<style>
+  .back-to-top-container {
+    position: fixed;
+    z-index: 1000;
+  }
+  
+  .back-to-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--animation-duration) cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    background: linear-gradient(135deg, var(--color-primary, #667eea) 0%, var(--color-accent, #764ba2) 100%);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+  }
+  
+  .back-to-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, var(--color-primary, #667eea) 0%, var(--color-accent, #764ba2) 100%);
+  }
+  
+  .back-to-btn:active {
+    transform: translateY(0);
+  }
+  
+  .back-to-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  .back-to-btn.visible:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Position classes */
+  .back-to-bottom-right {
+    bottom: var(--offset);
+    right: var(--offset);
+  }
+  
+  .back-to-bottom-left {
+    bottom: var(--offset);
+    left: var(--offset);
+  }
+  
+  .back-to-top-right {
+    top: var(--offset);
+    right: var(--offset);
+  }
+  
+  .back-to-top-left {
+    top: var(--offset);
+    left: var(--offset);
+  }
+  
+  .back-to-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+  
+  /* Dark mode support */
+  .dark .back-to-btn {
+    background: linear-gradient(135deg, var(--color-primary, #667eea) 0%, var(--color-accent, #764ba2) 100%);
+  }
+  
+  .dark .back-to-btn:hover {
+    background: linear-gradient(135deg, var(--color-primary, #667eea) 0%, var(--color-accent, #764ba2) 100%);
+  }
+  
+  /* Glass effect variant */
+  .back-to-btn.glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .dark .back-to-btn.glass {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Pulse animation */
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+  }
+  
+  .back-to-btn.pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-btn {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  class BackToTopController {
+    private button: HTMLButtonElement | null = null;
+    private threshold: number;
+    private speed: number;
+    private isVisible: boolean = false;
+    
+    constructor(threshold: number, speed: number) {
+      this.threshold = threshold;
+      this.speed = speed;
+      this.init();
+    }
+    
+    private init(): void {
+      this.button = document.getElementById('back-to-top');
+      if (!this.button) return;
+      
+      // Set initial position
+      this.setPosition();
+      
+      // Check initial scroll position
+      this.checkScrollPosition();
+      
+      // Add event listeners
+      this.addEventListeners();
+      
+      // Handle reduced motion
+      this.handleReducedMotion();
+    }
+    
+    private setPosition(): void {
+      if (!this.button) return;
+      
+      const position = this.button.dataset.position || 'bottom-right';
+      this.button.classList.remove(
+        'back-to-bottom-right',
+        'back-to-bottom-left',
+        'back-to-top-right',
+        'back-to-top-left'
+      );
+      
+      switch (position) {
+        case 'bottom-right':
+          this.button.classList.add('back-to-bottom-right');
+          break;
+        case 'bottom-left':
+          this.button.classList.add('back-to-bottom-left');
+          break;
+        case 'top-right':
+          this.button.classList.add('back-to-top-right');
+          break;
+        case 'top-left':
+          this.button.classList.add('back-to-top-left');
+          break;
+      }
+    }
+    
+    private handleReducedMotion(): void {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        // Always show the button if reduced motion is preferred
+        this.showButton();
+      }
+    }
+    
+    private checkScrollPosition(): void {
+      const scrollY = window.scrollY;
+      const shouldShow = scrollY > this.threshold;
+      
+      if (shouldShow && !this.isVisible) {
+        this.showButton();
+      } else if (!shouldShow && this.isVisible) {
+        this.hideButton();
+      }
+    }
+    
+    private showButton(): void {
+      if (!this.button) return;
+      
+      this.button.classList.add('visible');
+      this.isVisible = true;
+    }
+    
+    private hideButton(): void {
+      if (!this.button) return;
+      
+      this.button.classList.remove('visible');
+      this.isVisible = false;
+    }
+    
+    private scrollToTop(): void {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    private addEventListeners(): void {
+      if (!this.button) return;
+      
+      // Scroll event with throttling
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.checkScrollPosition();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      
+      // Use passive event listeners for better performance
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Click event
+      this.button.addEventListener('click', () => {
+        this.scrollToTop();
+      });
+      
+      // Resize event
+      window.addEventListener('resize', () => {
+        this.setPosition();
+      }, { passive: true });
+      
+      // Handle visibility changes
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          this.checkScrollPosition();
+        }
+      });
+    }
+    
+    public destroy(): void {
+      if (this.button) {
+        this.button.removeEventListener('click', this.scrollToTop);
+        this.button = null;
+      }
+    }
+  }
+  
+  // Initialize the back to top controller
+  let backToTopController: BackToTopController | null = null;
+  
+  function initBackToTop(): void {
+    const button = document.getElementById('back-to-top');
+    if (button && !backToTopController) {
+      const threshold = parseInt(button.dataset.threshold || '300');
+      const speed = parseInt(button.dataset.speed || '800');
+      backToTopController = new BackToTopController(threshold, speed);
+    }
+  }
+  
+  // DOM ready state handling
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBackToTop);
+  } else {
+    initBackToTop();
+  }
+  
+  // Astro page load handling
+  document.addEventListener('astro:page-load', initBackToTop);
+  
+  // Cleanup before page swap
+  document.addEventListener('astro:before-swap', () => {
+    backToTopController?.destroy();
+    backToTopController = null;
+  });
+</script>

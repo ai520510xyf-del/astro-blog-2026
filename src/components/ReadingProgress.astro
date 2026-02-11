@@ -1,0 +1,36 @@
+---
+interface Props {
+  height?: number;
+}
+
+const { height = 3 } = Astro.props;
+---
+
+<div 
+  id="reading-progress" 
+  class="fixed top-0 left-0 right-0 z-[60] h-[3px] bg-gray-200 dark:bg-gray-800 overflow-hidden"
+  style={`height: ${height}px`}
+>
+  <div 
+    id="reading-progress-bar"
+    class="h-full bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 bg-[length:200%_100%] animate-gradient-x transition-all duration-100"
+    style="width: 0%"
+  ></div>
+</div>
+
+<script>
+  const progressBar = document.getElementById('reading-progress-bar');
+  
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    
+    if (progressBar) {
+      progressBar.style.width = `${Math.min(progress, 100)}%`;
+    }
+  }
+  
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  document.addEventListener('DOMContentLoaded', updateProgress);
+</script>

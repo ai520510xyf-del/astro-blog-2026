@@ -1,0 +1,142 @@
+---
+/**
+ * 相关文章推荐组件
+ *
+ * 基于当前文章的标签，推荐相关文章
+ */
+interface Props {
+  currentTags: string[];
+  currentSlug: string;
+  limit?: number;
+}
+
+const { currentTags, currentSlug, limit = 3 } = Astro.props;
+
+// 获取所有文章
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts');
+
+// 计算相关度分数
+const postsWithScore = allPosts
+  .filter(post => post.slug !== currentSlug && !post.data.draft)
+  .map(post => {
+    const postTags = post.data.tags || [];
+    // 计算共同标签数量
+    const commonTags = currentTags.filter(tag => postTags.includes(tag));
+    return {
+      post,
+      score: commonTags.length,
+    };
+  })
+  .filter(({ score }) => score > 0) // 至少有一个共同标签
+  .sort((a, b) => b.score - a.score) // 按相关度排序
+  .slice(0, limit); // 限制数量
+
+const hasRelatedPosts = postsWithScore.length > 0;
+---
+
+{hasRelatedPosts && (
+  <section class="related-posts" aria-labelledby="related-posts-title">
+    <h2 id="related-posts-title" class="related-posts-title">
+      相关文章
+    </h2>
+    <div class="related-posts-grid">
+      {postsWithScore.map(({ post }) => (
+        <a
+          href={`/blog/${post.slug}`}
+          class="related-post-card"
+          aria-label={`阅读 ${post.data.title}`}
+        >
+          <h3 class="related-post-title">{post.data.title}</h3>
+          <p class="related-post-description">{post.data.description}</p>
+          <div class="related-post-meta">
+            <time datetime={post.data.date}>
+              {new Date(post.data.date).toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })}
+            </time>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .related-posts {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .related-posts-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: hsl(var(--foreground));
+  }
+
+  .related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-post-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 0.75rem;
+    background: hsl(var(--card));
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .related-post-card:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.1);
+  }
+
+  .related-post-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: hsl(var(--foreground));
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .related-post-card:hover .related-post-title {
+    color: hsl(var(--primary));
+  }
+
+  .related-post-description {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .related-post-meta {
+    margin-top: auto;
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  @media (max-width: 640px) {
+    .related-posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

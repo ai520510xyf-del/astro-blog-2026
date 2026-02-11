@@ -1,70 +1,205 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const skills = [
+  { name: 'TypeScript', level: 90, color: 'from-blue-500 to-blue-600' },
+  { name: 'React', level: 85, color: 'from-cyan-500 to-blue-500' },
+  { name: 'Astro', level: 80, color: 'from-orange-500 to-red-500' },
+  { name: 'Node.js', level: 75, color: 'from-green-500 to-emerald-600' },
+  { name: 'Tailwind CSS', level: 90, color: 'from-cyan-400 to-teal-500' },
+  { name: 'Python', level: 70, color: 'from-yellow-500 to-amber-600' },
+];
+
+const timeline = [
+  {
+    year: '2024',
+    title: '全栈开发者',
+    description: '使用 React、Node.js 和云技术构建现代化 Web 应用程序。',
+    icon: '🚀'
+  },
+  {
+    year: '2023',
+    title: '前端工程师',
+    description: '专注于使用现代框架创建美观、可访问的用户界面。',
+    icon: '🎨'
+  },
+  {
+    year: '2022',
+    title: 'Web 开发者',
+    description: '开始 Web 开发的专业旅程，学习基础知识。',
+    icon: '💼'
+  },
+  {
+    year: '2021',
+    title: '编程之旅开始',
+    description: '发现了对编程的热爱，开始学习代码。',
+    icon: '🌱'
+  },
+];
+
+const features = [
+  {
+    icon: '⚡',
+    title: '极速加载',
+    description: '使用 Astro 构建，追求最大性能和最小 JavaScript 打包体积。'
+  },
+  {
+    icon: '📱',
+    title: '完全响应式',
+    description: '在所有设备上看起来都很棒，从移动设备到桌面端。'
+  },
+  {
+    icon: '🎨',
+    title: '精美设计',
+    description: '简洁美观的 UI，流畅的动画和过渡效果。'
+  },
+  {
+    icon: '♿',
+    title: '无障碍访问',
+    description: '为所有用户考虑可访问性进行构建。'
+  },
+];
 ---
 
-<Layout title="About" description="Learn more about this blog">
-  <div class="bg-white py-20">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-3xl">
-        <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-8">
-          About This Blog
+<Layout title="关于" description="了解更多关于本博客">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-primary-50 via-white to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-900">
+    <div class="absolute inset-0 opacity-30 dark:opacity-10">
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-400 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-400 rounded-full blur-3xl animate-float" style="animation-delay: 3s;"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div class="text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 animate-slide-up">
+          关于<span class="gradient-text">我</span>
         </h1>
+        <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto animate-slide-up animation-delay-100">
+          一名热爱开发的开发者，用简洁的代码和精美的设计构建现代化的 Web 体验。
+        </p>
+      </div>
+    </div>
+  </section>
 
-        <div class="prose prose-lg max-w-none">
-          <p>
-            Welcome to my blog! This is a modern static blog built with
-            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700">
-              Astro 5
-            </a>,
-            <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700">
-              Tailwind CSS
-            </a>,
-            and
-            <a href="https://react.dev" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700">
-              React
-            </a>.
+  <!-- Main Content -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <!-- Left Column - Bio -->
+      <div class="lg:col-span-2 space-y-12">
+        <!-- Bio Card -->
+        <div class="glass-card p-8 animate-fade-in">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">我是谁</h2>
+          <div class="prose dark:prose-invert max-w-none">
+            <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+              欢迎来到我的博客！我是一名热衷于为 Web 构建各种事物的开发者。
+              这个博客是我分享关于 Web 开发、设计和技术方面的思考、教程和见解的空间。
+            </p>
+            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+              我相信编写简洁、可维护的代码，并创建美观、可访问的用户体验。
+              当我不编码时，你会发现我在探索新技术、阅读技术博客或为开源项目做贡献。
+            </p>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="animate-fade-in animation-delay-200">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">我的旅程</h2>
+          <div class="relative">
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500"></div>
+            <div class="space-y-8">
+              {timeline.map((item, index) => (
+                <div 
+                  class="relative pl-12 animate-slide-left"
+                  style={`animation-delay: ${index * 150}ms`}
+                >
+                  <div class="absolute left-0 w-8 h-8 rounded-full bg-white dark:bg-gray-800 border-2 border-primary-500 flex items-center justify-center text-sm shadow-lg">
+                    {item.icon}
+                  </div>
+                  <div class="glass-card p-6 hover:border-primary-300 dark:hover:border-primary-700 transition-colors duration-300">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-sm font-semibold text-primary-600 dark:text-primary-400">{item.year}</span>
+                      <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></span>
+                      <h3 class="font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Skills & Features -->
+      <div class="space-y-8">
+        <!-- Skills -->
+        <div class="glass-card p-6 animate-fade-in animation-delay-100">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">技能</h2>
+          <div class="space-y-4">
+            {skills.map((skill, index) => (
+              <div 
+                class="group"
+                style={`animation-delay: ${index * 100}ms`}
+              >
+                <div class="flex justify-between mb-1.5">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{skill.name}</span>
+                  <span class="text-sm text-gray-500 dark:text-gray-500">{skill.level}%</span>
+                </div>
+                <div class="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                  <div 
+                    class={`h-full bg-gradient-to-r ${skill.color} rounded-full transition-all duration-1000 ease-out`}
+                    style={`width: ${skill.level}%`}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="glass-card p-6 animate-fade-in animation-delay-200">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">本博客</h2>
+          <div class="grid grid-cols-2 gap-4">
+            {features.map((feature) => (
+              <div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors duration-300 group">
+                <div class="text-2xl mb-2">{feature.icon}</div>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{feature.title}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-500">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="glass-card p-6 animate-fade-in animation-delay-300">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">联系方式</h2>
+          <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            随时通过社交媒体或邮件联系我。
           </p>
-
-          <h2>Tech Stack</h2>
-          <ul>
-            <li><strong>Astro 5</strong> - Modern static site generator</li>
-            <li><strong>Tailwind CSS</strong> - Utility-first CSS framework</li>
-            <li><strong>React</strong> - For interactive components</li>
-            <li><strong>MDX</strong> - Enhanced Markdown with JSX support</li>
-            <li><strong>TypeScript</strong> - Type-safe development</li>
-          </ul>
-
-          <h2>Features</h2>
-          <ul>
-            <li>⚡ Lightning-fast page loads</li>
-            <li>📱 Fully responsive design</li>
-            <li>🎨 Beautiful gradient effects</li>
-            <li>📝 Markdown/MDX support for posts</li>
-            <li>🔍 SEO optimized</li>
-            <li>♿ Accessible UI components</li>
-            <li>🗺️ Automatic sitemap generation</li>
-          </ul>
-
-          <h2>Getting Started</h2>
-          <p>
-            To add new posts, simply create Markdown or MDX files in the
-            <code class="px-2 py-1 bg-gray-100 rounded">src/content/blog/</code> directory.
-            Each post should have frontmatter with title, description, date, and optional tags.
-          </p>
-
-          <h2>Contact</h2>
-          <p>
-            Feel free to reach out via
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700">
-              GitHub
+          <div class="flex gap-3">
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+              </svg>
             </a>
-            or
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-700">
-              Twitter
-            </a>.
-          </p>
+            <a 
+              href="https://twitter.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </Layout>

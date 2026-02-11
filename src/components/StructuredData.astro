@@ -1,0 +1,78 @@
+---
+interface Props {
+  type: 'WebSite' | 'BlogPosting' | 'BreadcrumbList';
+  data: Record<string, unknown>;
+}
+
+const { type, data } = Astro.props;
+
+const base = {
+  '@context': 'https://schema.org',
+};
+
+let jsonLd: Record<string, unknown> = base;
+
+if (type === 'WebSite') {
+  jsonLd = {
+    ...base,
+    '@type': 'WebSite',
+    url: data.url,
+    name: data.name,
+    description: data.description,
+    author: {
+      '@type': 'Person',
+      name: data.authorName,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: data.siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: data.logo,
+      },
+    },
+  };
+} else if (type === 'BlogPosting') {
+  jsonLd = {
+    ...base,
+    '@type': 'BlogPosting',
+    headline: data.headline,
+    description: data.description,
+    image: data.image,
+    datePublished: data.datePublished,
+    dateModified: data.dateModified,
+    author: {
+      '@type': 'Person',
+      name: data.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: data.siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: data.logo,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': data.url,
+    },
+    keywords: Array.isArray(data.tags) ? data.tags.join(', ') : '',
+  };
+} else if (type === 'BreadcrumbList') {
+  jsonLd = {
+    ...base,
+    '@type': 'BreadcrumbList',
+    itemListElement: Array.isArray(data.breadcrumbs) 
+      ? data.breadcrumbs.map((item: { name: string; url: string }, index: number) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          item: item.url,
+        }))
+      : [],
+  };
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline></script>

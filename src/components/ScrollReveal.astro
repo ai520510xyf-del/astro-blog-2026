@@ -1,0 +1,116 @@
+---
+/**
+ * 滚动动画控制器
+ * 使用 IntersectionObserver 实现高性能滚动触发动画
+ */
+---
+
+<script>
+  class ScrollRevealController {
+    private observer: IntersectionObserver | null = null;
+    private elements: NodeListOf<Element> | null = null;
+    
+    constructor() {
+      this.init();
+    }
+    
+    private init(): void {
+      // 检查是否支持 reduced motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        this.showAllElements();
+        return;
+      }
+      
+      // 创建 IntersectionObserver
+      this.observer = new IntersectionObserver(
+        (entries) => this.handleIntersect(entries),
+        {
+          root: null,
+          rootMargin: '0px 0px -50px 0px',
+          threshold: 0.1
+        }
+      );
+      
+      // 观察所有需要动画的元素
+      this.observeElements();
+    }
+    
+    private observeElements(): void {
+      const selectors = [
+        '.animate-scroll-reveal',
+        '.animate-scroll-reveal-left',
+        '.animate-scroll-reveal-right',
+        '.animate-scroll-reveal-scale',
+        '.feature-card',
+        '.section-reveal',
+        '.animate-stagger > *',
+        '.animate-stagger-fast > *',
+        '.animate-stagger-slow > *'
+      ];
+      
+      const selector = selectors.join(', ');
+      this.elements = document.querySelectorAll(selector);
+      
+      this.elements.forEach((el) => {
+        this.observer?.observe(el);
+      });
+    }
+    
+    private handleIntersect(entries: IntersectionObserverEntry[]): void {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          // 一旦显示，停止观察以提高性能
+          this.observer?.unobserve(entry.target);
+        }
+      });
+    }
+    
+    private showAllElements(): void {
+      const selectors = [
+        '.animate-scroll-reveal',
+        '.animate-scroll-reveal-left',
+        '.animate-scroll-reveal-right',
+        '.animate-scroll-reveal-scale',
+        '.feature-card',
+        '.section-reveal'
+      ];
+      
+      selectors.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          el.classList.add('revealed');
+        });
+      });
+    }
+    
+    public destroy(): void {
+      this.observer?.disconnect();
+      this.observer = null;
+      this.elements = null;
+    }
+  }
+  
+  // 初始化
+  let scrollRevealController: ScrollRevealController | null = null;
+  
+  function initScrollReveal(): void {
+    if (scrollRevealController) {
+      scrollRevealController.destroy();
+    }
+    scrollRevealController = new ScrollRevealController();
+  }
+  
+  // DOM 加载完成后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollReveal);
+  } else {
+    initScrollReveal();
+  }
+  
+  // Astro View Transitions 支持
+  document.addEventListener('astro:page-load', initScrollReveal);
+  document.addEventListener('astro:before-swap', () => {
+    scrollRevealController?.destroy();
+  });
+</script>

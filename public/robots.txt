@@ -1,0 +1,8 @@
+# robots.txt for Astro Blog
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location (update with your domain)
+Sitemap: https://your-domain.com/sitemap-index.xml

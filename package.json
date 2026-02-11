@@ -10,25 +10,41 @@
     "astro": "astro",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
-    "lint": "astro check"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "astro check",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^3.1.8",
     "@astrojs/react": "^3.6.2",
+    "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/tailwind": "^5.1.2",
     "astro": "^4.16.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.7.2"
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.18"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-arm64-gnu": "^4.57.1"
   }
 }

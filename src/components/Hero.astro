@@ -1,39 +1,133 @@
 ---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+}
+
+const {
+  title = "欢迎来到我的",
+  subtitle = "博客",
+  description = "探索技术、分享思想、记录软件开发之旅。使用 Astro 构建，追求极致性能。"
+} = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900 py-20 sm:py-32">
-  <!-- Animated background elements -->
-  <div class="absolute inset-0 overflow-hidden">
-    <div class="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary-400/20 dark:bg-primary-600/10 animate-float"></div>
-    <div class="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-purple-400/20 dark:bg-purple-600/10 animate-float" style="animation-delay: 1s;"></div>
-    <div class="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-pink-400/20 dark:bg-pink-600/10 animate-float" style="animation-delay: 2s;"></div>
+<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+  <!-- Animated gradient background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950"></div>
+  
+  <!-- Animated mesh gradient -->
+  <div class="absolute inset-0 opacity-40 dark:opacity-20">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-400 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-float"></div>
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-accent-400 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl animate-float" style="animation-delay: 4s;"></div>
+  </div>
+  
+  <!-- Grid pattern overlay -->
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+  
+  <!-- Radial gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent dark:from-gray-950 dark:via-transparent dark:to-transparent"></div>
+  
+  <!-- Floating particles -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" id="particles-container">
+    {Array.from({ length: 20 }).map((_, i) => (
+      <div
+        class="absolute w-2 h-2 bg-primary-500/30 dark:bg-primary-400/20 rounded-full animate-particle-float"
+        style={{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 10}s`,
+          animationDuration: `${10 + Math.random() * 10}s`,
+        }}
+      ></div>
+    ))}
   </div>
 
   <!-- Content -->
-  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="text-center animate-fade-in">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
-        Welcome to My
-        <span class="gradient-text">Blog</span>
-      </h1>
-      <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        Exploring technology, sharing ideas, and documenting the journey of software development.
-        Built with Astro for maximum performance.
-      </p>
-      <div class="mt-10 flex items-center justify-center gap-x-6">
-        <a
-          href="/blog"
-          class="rounded-lg bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-        >
-          Read Blog
-        </a>
-        <a
-          href="/about"
-          class="rounded-lg border border-gray-300 dark:border-gray-700 px-6 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 transition-all duration-200"
-        >
-          About Me
-        </a>
+  <div class="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100/80 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 mb-8 animate-fade-in">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-600"></span>
+      </span>
+      <span class="text-sm font-medium text-primary-700 dark:text-primary-300">使用 Astro 5 构建</span>
+    </div>
+    
+    <!-- Main heading with typing effect -->
+    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-slide-up">
+      <span class="text-gray-900 dark:text-white">{title}</span>
+      <br />
+      <span class="gradient-text">{subtitle}</span>
+    </h1>
+    
+    <!-- Description -->
+    <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 animate-slide-up animation-delay-200">
+      {description}
+    </p>
+    
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up animation-delay-300">
+      <a
+        href="/blog"
+        class="group relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105"
+      >
+        <span class="absolute inset-0 bg-gradient-to-r from-primary-600 to-accent-600"></span>
+        <span class="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+        <span class="absolute inset-0 shadow-2xl shadow-primary-500/25 group-hover:shadow-primary-500/40 transition-shadow"></span>
+        <span class="relative flex items-center gap-2">
+          阅读博客
+          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </span>
+      </a>
+      
+      <a
+        href="/about"
+        class="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+      >
+        关于我
+        <svg class="w-5 h-5 group-hover:rotate-45 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce-subtle">
+      <div class="flex flex-col items-center gap-2 text-gray-400 dark:text-gray-600">
+        <span class="text-xs font-medium">向下滚动</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  @keyframes particle-float {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(10px, -20px) scale(1.2);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translate(-5px, -40px) scale(0.8);
+      opacity: 0.2;
+    }
+    75% {
+      transform: translate(-15px, -20px) scale(1.1);
+      opacity: 0.5;
+    }
+  }
+  
+  .animate-particle-float {
+    animation: particle-float 10s ease-in-out infinite;
+  }
+</style>

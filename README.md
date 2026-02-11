@@ -1,76 +1,168 @@
-# Astro 5 Blog
+# Astro Blog
 
-A modern, fast static blog built with [Astro 5](https://astro.build), [Tailwind CSS](https://tailwindcss.com), and [React](https://react.dev).
+A modern, high-performance static blog built with [Astro](https://astro.build), [Tailwind CSS](https://tailwindcss.com), and [TypeScript](https://typescriptlang.org).
+
+![Astro](https://img.shields.io/badge/Astro-4.16-BC52EE?logo=astro&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
 ## Features
 
-- ⚡ **Astro 5** - Latest version with improved performance
-- 🎨 **Tailwind CSS** - Utility-first styling
-- ⚛️ **React** - For interactive components
-- 📝 **MDX** - Enhanced Markdown support
-- 🗺️ **Sitemap** - Automatic sitemap generation
-- 🎯 **TypeScript** - Type-safe development
-- 🔥 **Zero JS by default** - Best performance
+- **Fast** - Static site generation with zero JavaScript by default
+- **Responsive** - Mobile-first design with Tailwind CSS
+- **SEO Optimized** - Built-in sitemap, meta tags, and semantic HTML
+- **Accessible** - WCAG compliant components with proper ARIA labels
+- **Type-Safe** - Full TypeScript support for reliable development
+- **Dark Mode** - Automatic theme switching with localStorage persistence
+- **Content Collections** - Type-safe content management with Astro
+- **Syntax Highlighting** - Beautiful code blocks with Shiki
 
 ## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 20 or higher
+- npm, pnpm, or yarn
 
 ### Installation
 
-1. **Install dependencies:**
 ```bash
-npm install
-```
+# Clone the repository
+git clone https://github.com/your-username/astro-blog.git
+cd astro-blog
 
-2. **Start development server:**
-```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-3. **Open your browser:**
-Navigate to `http://localhost:4321`
+Open [http://localhost:4321](http://localhost:4321) in your browser.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run format` | Format code with Prettier |
+| `npm run format:check` | Check code formatting |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Fix ESLint issues automatically |
+| `npm run type-check` | Run Astro type checker |
 
 ## Project Structure
 
 ```
-src/
-├── layouts/       # Layout components
-├── pages/         # Route pages
-├── components/    # React/Astro components
-└── styles/        # Global styles
+astro-blog/
+├── public/              # Static assets
+├── src/
+│   ├── components/      # Reusable components
+│   │   ├── BlogCard.astro
+│   │   ├── Footer.astro
+│   │   ├── Header.astro
+│   │   └── Hero.astro
+│   ├── content/         # Blog posts
+│   │   ├── config.ts    # Content collection schema
+│   │   └── posts/       # Markdown/MDX posts
+│   ├── layouts/         # Page layouts
+│   │   └── Layout.astro
+│   ├── pages/           # File-based routing
+│   │   ├── index.astro
+│   │   ├── about.astro
+│   │   └── blog/
+│   └── styles/          # Global styles
+├── docs/                # Documentation
+├── astro.config.mjs     # Astro configuration
+├── tailwind.config.ts   # Tailwind configuration
+└── package.json
 ```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run format` - Format code with Prettier
-- `npm run lint` - Type check with Astro
 
 ## Tech Stack
 
-- **Framework**: Astro 5.16.12
-- **Styling**: Tailwind CSS 3.4.17
-- **UI**: React 18.3.1
-- **Content**: MDX 3.1.8
-- **Language**: TypeScript 5.7.2
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Astro](https://astro.build) | 4.16 | Static Site Generator |
+| [Tailwind CSS](https://tailwindcss.com) | 3.4 | Styling |
+| [TypeScript](https://typescriptlang.org) | 5.7 | Type Safety |
+| [MDX](https://mdxjs.com) | 3.1 | Enhanced Markdown |
+
+## Adding Blog Posts
+
+Create a new Markdown/MDX file in `src/content/posts/`:
+
+```markdown
+---
+title: 'Your Post Title'
+description: 'A brief description for SEO and previews'
+pubDate: 2024-01-15
+tags: ['Astro', 'Web Development']
+author: 'Your Name'
+draft: false
+---
+
+# Your Content
+
+Write your blog post content here using Markdown!
+```
 
 ## Configuration
 
-- `astro.config.mjs` - Astro configuration
-- `tailwind.config.ts` - Tailwind configuration
-- `tsconfig.json` - TypeScript configuration
+### Environment Variables
 
-## Learn More
+Create a `.env` file:
 
-- [Astro Documentation](https://docs.astro.build)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [React Documentation](https://react.dev)
+```bash
+SITE_URL=https://yourdomain.com
+SITE_NAME=Your Blog Name
+```
+
+### Site Configuration
+
+Edit `astro.config.mjs` for:
+- Site integrations (MDX, React, Tailwind)
+- Build options
+- Markdown plugins
+- Sitemap settings
+
+## Deployment
+
+### Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?s=https://github.com/your-username/astro-blog)
+
+### Netlify
+
+```bash
+npm run build
+# Deploy the 'dist' folder
+```
+
+### GitHub Pages
+
+Push to the main branch and the GitHub Actions workflow will deploy automatically.
+
+See [Deployment Guide](docs/DEPLOYMENT.md) for detailed instructions.
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## Documentation
+
+- [Development Guide](CONTRIBUTING.md) - How to contribute
+- [Deployment Guide](docs/DEPLOYMENT.md) - Deployment instructions
+- [Astro Docs](https://docs.astro.build) - Official documentation
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+Built with:
+- [Astro](https://astro.build) - The web framework for content-driven websites
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
+- [Shiki](https://shiki.style) - Syntax highlighter

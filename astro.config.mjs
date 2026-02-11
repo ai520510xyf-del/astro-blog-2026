@@ -5,7 +5,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  integrations: [mdx(), react(), tailwind(), sitemap()],
+  integrations: [mdx(), react(), tailwind()],
   site: import.meta.env.SITE_URL || 'https://your-domain.com',
   base: import.meta.env.BASE_PATH || '/',
   build: {

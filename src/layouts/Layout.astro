@@ -1,73 +1,481 @@
 ---
+import SEO from '../components/SEO.astro';
+
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
 }
 
 const {
-  title = 'Astro Blog',
-  description = 'A modern blog built with Astro 5',
+  title = 'Astro 博客',
+  description = '使用 Astro 5 构建的现代化博客',
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  tags = [],
 } = Astro.props;
-
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN" class="scroll-smooth">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <link rel="canonical" href={canonicalURL} />
+    <!-- SEO 组件统一管理所有 meta 标签 -->
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+    />
 
-    <title>{title} | Astro Blog</title>
+    <meta name="generator" content={Astro.generator} />
 
     <!-- Preload fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- RSS Feed auto-discovery -->
+    <link rel="alternate" type="application/rss+xml" title={title} href="/rss.xml" />
+
+    <!-- View Transitions API -->
+    <meta name="view-transition" content="same-origin" />
   </head>
-  <body class="bg-white text-gray-900 antialiased font-sans">
+
+  <!-- 主题过渡动画：通过 CSS 变量实现平滑切换 -->
+  <body 
+    class="bg-white text-gray-900 antialiased font-sans dark:bg-gray-900 dark:text-gray-100 transition-colors duration-500 ease-out"
+    data-theme="light"
+  >
+    <!-- 页面加载骨架屏遮罩 -->
+    <div 
+      id="page-loader" 
+      class="fixed inset-0 z-[9999] bg-white dark:bg-gray-900 flex items-center justify-center transition-opacity duration-300"
+      aria-hidden="true"
+    >
+      <div class="flex flex-col items-center gap-4">
+        <!-- 加载动画 -->
+        <div class="relative w-12 h-12">
+          <div class="absolute inset-0 rounded-full border-2 border-primary-200 dark:border-primary-800"></div>
+          <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-primary-500 animate-spin"></div>
+        </div>
+        <!-- 骨架屏文字 -->
+        <div class="flex flex-col gap-2 items-center">
+          <div class="w-32 h-4 skeleton rounded-md"></div>
+          <div class="w-24 h-3 skeleton rounded-md opacity-60"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主布局容器 -->
     <div class="flex flex-col min-h-screen">
-      <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <!-- Header 带交错进入动画 -->
+      <header 
+        class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 animate-slide-down"
+        style="animation-delay: 0ms;"
+      >
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between">
-            <a href="/" class="flex items-center space-x-2">
-              <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600"></div>
-              <span class="text-xl font-bold">Astro Blog</span>
+            <!-- Logo 带缩放进入动画 -->
+            <a 
+              href="/" 
+              class="flex items-center space-x-2 group animate-blur-in"
+              style="animation-delay: 100ms;"
+            >
+              <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"></div>
+              <span class="text-xl font-bold transition-colors duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400">Astro 博客</span>
             </a>
-            <nav class="hidden md:flex items-center space-x-6">
-              <a href="/" class="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">Home</a>
-              <a href="/blog" class="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">Blog</a>
-              <a href="/about" class="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">About</a>
-            </nav>
+
+            <!-- 导航 + 主题切换 -->
+            <div class="flex items-center gap-4">
+              <nav class="hidden md:flex items-center space-x-6 animate-fade-in" style="animation-delay: 200ms;">
+                <a 
+                  href="/" 
+                  class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  首页
+                </a>
+                <a 
+                  href="/blog" 
+                  class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  博客
+                </a>
+                <a 
+                  href="/about" 
+                  class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  关于
+                </a>
+              </nav>
+
+              <!-- 主题切换按钮 -->
+              <button 
+                id="theme-toggle"
+                type="button"
+                class="relative p-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 group animate-scale-in"
+                style="animation-delay: 300ms;"
+                aria-label="切换主题"
+                title="切换明暗主题"
+              >
+                <!-- 太阳图标 (亮色模式显示) -->
+                <svg 
+                  class="w-5 h-5 text-amber-500 transition-all duration-500 rotate-0 scale-100 dark:rotate-90 dark:scale-0 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <!-- 月亮图标 (暗色模式显示) -->
+                <svg 
+                  class="w-5 h-5 text-indigo-400 transition-all duration-500 rotate-0 scale-100 dark:rotate-0 dark:scale-100 rotate-90 scale-0 dark:rotate-0 dark:scale-100"
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+                <!-- 悬停光晕效果 -->
+                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-400/20 to-orange-400/20 dark:from-indigo-400/20 dark:to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
+
+              <!-- 移动端菜单按钮 -->
+              <button 
+                id="mobile-menu-btn"
+                type="button"
+                class="md:hidden p-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+                aria-label="打开菜单"
+                aria-expanded="false"
+              >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </div>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div 
+          id="mobile-menu"
+          class="md:hidden hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+        >
+          <nav class="container mx-auto px-4 py-4 flex flex-col space-y-3">
+            <a href="/" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">首页</a>
+            <a href="/blog" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">博客</a>
+            <a href="/about" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">关于</a>
+          </nav>
         </div>
       </header>
 
-      <main class="flex-1">
+      <!-- Main 内容区域带淡入动画 -->
+      <main 
+        id="main-content"
+        class="flex-1 animate-fade-in"
+        style="animation-delay: 300ms;"
+      >
         <slot />
       </main>
 
-      <footer class="border-t border-gray-200 bg-gray-50">
+      <!-- Footer 带滑入动画 -->
+      <footer 
+        class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 animate-slide-up"
+        style="animation-delay: 400ms;"
+      >
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p class="text-sm text-gray-600">
-              © {new Date().getFullYear()} Astro Blog. Built with Astro 5.
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              © {new Date().getFullYear()} Astro 博客. 使用 Astro 5 构建.
             </p>
             <div class="flex space-x-6">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-primary-600 transition-colors">
+              <a 
+                href="https://github.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 hover:-translate-y-0.5"
+              >
                 GitHub
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-primary-600 transition-colors">
-                Twitter
+              <a 
+                href="/rss.xml" 
+                class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 hover:-translate-y-0.5"
+              >
+                RSS
               </a>
             </div>
           </div>
         </div>
       </footer>
     </div>
+
+    <!-- 页面过渡动画样式 -->
+    <style is:global>
+      /* ===== View Transitions API 页面过渡 ===== */
+      @view-transition {
+        navigation: auto;
+      }
+
+      /* 页面退出动画 */
+      ::view-transition-old(root) {
+        animation: pageExit 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      /* 页面进入动画 */
+      ::view-transition-new(root) {
+        animation: pageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes pageExit {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+          filter: blur(0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0.98);
+          filter: blur(4px);
+        }
+      }
+
+      @keyframes pageEnter {
+        0% {
+          opacity: 0;
+          transform: scale(1.02);
+          filter: blur(4px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          filter: blur(0);
+        }
+      }
+
+      /* ===== 主题切换过渡动画 ===== */
+      /* 禁用默认的颜色过渡，使用自定义动画 */
+      html.dark {
+        color-scheme: dark;
+      }
+
+      /* 主题切换时的整体过渡 */
+      html {
+        transition: background-color 0.5s ease-out;
+      }
+
+      /* 主题切换圆形扩散动画 (实验性) */
+      @keyframes themeTransition {
+        0% {
+          clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+        }
+        100% {
+          clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+        }
+      }
+
+      /* ===== 骨架屏动画 ===== */
+      .skeleton {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.06) 0%,
+          rgba(0, 0, 0, 0.15) 50%,
+          rgba(0, 0, 0, 0.06) 100%
+        );
+      }
+
+      .dark .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.04) 0%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 255, 255, 0.04) 100%
+        );
+      }
+
+      .skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        animation: shimmer 1.5s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* ===== 交错动画延迟工具类 ===== */
+      .stagger-1 { animation-delay: 100ms; }
+      .stagger-2 { animation-delay: 200ms; }
+      .stagger-3 { animation-delay: 300ms; }
+      .stagger-4 { animation-delay: 400ms; }
+      .stagger-5 { animation-delay: 500ms; }
+      .stagger-6 { animation-delay: 600ms; }
+
+      /* ===== 内容进入动画 ===== */
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+
+      .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ===== 减少动画偏好支持 ===== */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .animate-on-scroll {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+
+    <!-- 客户端脚本 -->
+    <script is:inline>
+      // ===== 主题切换逻辑 =====
+      const themeToggle = document.getElementById('theme-toggle');
+      const html = document.documentElement;
+      
+      // 初始化主题
+      function initTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+          html.classList.add('dark');
+          document.body.setAttribute('data-theme', 'dark');
+        }
+      }
+      
+      // 切换主题
+      function toggleTheme() {
+        const isDark = html.classList.contains('dark');
+        
+        // 添加过渡类
+        document.body.style.transition = 'background-color 0.5s ease-out, color 0.5s ease-out';
+        
+        if (isDark) {
+          html.classList.remove('dark');
+          document.body.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+        } else {
+          html.classList.add('dark');
+          document.body.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        }
+      }
+      
+      // 绑定事件
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
+      
+      // 监听系统主题变化
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          if (e.matches) {
+            html.classList.add('dark');
+            document.body.setAttribute('data-theme', 'dark');
+          } else {
+            html.classList.remove('dark');
+            document.body.setAttribute('data-theme', 'light');
+          }
+        }
+      });
+
+      // ===== 页面加载器 =====
+      const pageLoader = document.getElementById('page-loader');
+      
+      function hideLoader() {
+        if (pageLoader) {
+          pageLoader.style.opacity = '0';
+          setTimeout(() => {
+            pageLoader.style.display = 'none';
+          }, 300);
+        }
+      }
+      
+      // 页面加载完成后隐藏加载器
+      window.addEventListener('load', hideLoader);
+      
+      // 备用：DOMContentLoaded 后 1 秒强制隐藏
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(hideLoader, 1000);
+      });
+
+      // ===== 移动端菜单 =====
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+          const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+          mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+          mobileMenu.classList.toggle('hidden');
+          
+          // 添加动画
+          if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.style.animation = 'slideDown 0.3s ease-out forwards';
+          }
+        });
+      }
+
+      // ===== 滚动动画观察器 =====
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+      };
+      
+      const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            scrollObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      
+      // 观察所有需要动画的元素
+      document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        scrollObserver.observe(el);
+      });
+
+      // 初始化
+      initTheme();
+    </script>
   </body>
 </html>

@@ -1,7 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { Fragment } from 'astro/jsx-runtime';
+import ReadingProgress from '../../components/ReadingProgress.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import GiscusComments from '../../components/GiscusComments.astro';
+import StructuredData from '../../components/StructuredData.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
@@ -15,95 +18,205 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 
 const formatDate = (date: Date) => {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
 };
 
-// Get all posts for navigation
 const allPosts = await getCollection('posts');
 const sortedPosts = allPosts
   .filter(p => !p.data.draft)
   .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate || a.data.date);
-    const dateB = new Date(b.data.pubDate || b.data.date);
+    const dateA = new Date(a.data.pubDate);
+    const dateB = new Date(b.data.pubDate);
     return dateB.valueOf() - dateA.valueOf();
   });
 
 const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
 const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
 const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+
+const postDate = post.data.pubDate;
+const postUrl = new URL(Astro.url.pathname, Astro.site).href;
+const postTags = post.data.tags || [];
 ---
 
-<Layout title={`${post.data.title} - Astro Blog`} description={post.data.description}>
-  <article class="py-16 sm:py-24">
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedTime={postDate?.toISOString()}
+  modifiedTime={post.data.updatedDate?.toISOString()}
+  tags={postTags}
+>
+  <ReadingProgress />
+  
+  <StructuredData
+    type="BlogPosting"
+    data={{
+      headline: post.data.title,
+      description: post.data.description,
+      image: post.data.heroImage,
+      datePublished: postDate?.toISOString(),
+      dateModified: post.data.updatedDate?.toISOString() || postDate?.toISOString(),
+      author: post.data.author || 'Anonymous',
+      siteName: 'Astro 博客',
+      logo: new URL('/favicon.svg', Astro.site).href,
+      url: postUrl,
+      tags: postTags,
+    }}
+  />
+
+  <article class="py-12 sm:py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-      <!-- Header -->
-      <header class="mb-12">
-        <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
-          <time datetime={(post.data.pubDate || post.data.date)?.toISOString()}>
-            {formatDate(post.data.pubDate || post.data.date)}
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors mb-8 group"
+      >
+        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        返回博客
+      </a>
+
+      <header class="mb-12 animate-fade-in">
+        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-500 dark:text-gray-400">作者：</span>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center text-white font-semibold text-xs">
+              {(post.data.author || 'A').charAt(0).toUpperCase()}
+            </div>
+            <span class="font-medium text-gray-700 dark:text-gray-300">{post.data.author || '作者'}</span>
+          </div>
+          <span class="text-gray-300 dark:text-gray-700">•</span>
+          <time datetime={postDate?.toISOString()} class="flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {formatDate(postDate)}
           </time>
           {post.data.readingTime && (
-            <Fragment>
-              <span>•</span>
-              <span>{post.data.readingTime}</span>
-            </Fragment>
+            <>
+              <span class="text-gray-300 dark:text-gray-700">•</span>
+              <span class="flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {post.data.readingTime} 分钟阅读
+              </span>
+            </>
           )}
         </div>
 
-        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl mb-4">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
           {post.data.title}
         </h1>
 
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-6">
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
           {post.data.description}
         </p>
 
-        {post.data.tags && post.data.tags.length > 0 && (
+        {postTags.length > 0 && (
           <div class="flex flex-wrap gap-2">
-            {post.data.tags.map((tag) => (
-              <span class="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/20 px-3 py-1 text-sm font-medium text-primary-700 dark:text-primary-300">
+            {postTags.map((tag: string) => (
+              <a
+                href={`/blog/?tag=${encodeURIComponent(tag)}`}
+                class="badge-primary hover:scale-105 transition-transform"
+              >
                 #{tag}
-              </span>
+              </a>
             ))}
           </div>
         )}
       </header>
 
-      <!-- Content -->
-      <div class="prose dark:prose-invert max-w-none">
+      <div class="article-content prose prose-lg dark:prose-invert max-w-none
+        prose-headings:scroll-mt-24
+        prose-headings:font-bold prose-headings:tracking-tight
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-gray-200 dark:prose-h2:border-gray-800
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+        prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed
+        prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-a:no-underline hover:prose-a:underline
+        prose-code:text-primary-600 dark:prose-code:text-primary-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+        prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-800 prose-pre:rounded-xl prose-pre:shadow-lg
+        prose-blockquote:border-l-primary-500 prose-blockquote:bg-primary-50/50 dark:prose-blockquote:bg-primary-900/10 prose-blockquote:rounded-r-lg prose-blockquote:py-1
+        prose-img:rounded-xl prose-img:shadow-lg
+        prose-li:text-gray-600 dark:prose-li:text-gray-400
+        prose-hr:border-gray-200 dark:prose-hr:border-gray-800
+      ">
         <Content />
       </div>
 
-      <!-- Navigation -->
-      <nav class="mt-16 flex justify-between gap-4 border-t border-gray-200 dark:border-gray-800 pt-8">
+      {postTags.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+          <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-500 uppercase tracking-wide mb-4">标签</h3>
+          <div class="flex flex-wrap gap-2">
+            {postTags.map((tag: string) => (
+              <a
+                href={`/blog/?tag=${encodeURIComponent(tag)}`}
+                class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-300"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                {tag}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <nav class="mt-12 grid grid-cols-2 gap-4" aria-label="Article navigation">
         {prevPost ? (
           <a
             href={`/blog/${prevPost.slug}`}
-            class="flex-1 rounded-lg border border-gray-200 dark:border-gray-800 p-6 text-left hover:border-primary-600 dark:hover:border-primary-400 transition-colors"
+            class="group relative p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 overflow-hidden"
           >
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Previous</p>
-            <p class="font-semibold text-gray-900 dark:text-gray-100">{prevPost.data.title}</p>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-transparent transition-all duration-300"></div>
+            <div class="relative">
+              <p class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500 mb-2">
+                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                上一篇
+              </p>
+              <p class="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{prevPost.data.title}</p>
+            </div>
           </a>
         ) : (
-          <div class="flex-1"></div>
+          <div></div>
         )}
 
         {nextPost ? (
           <a
             href={`/blog/${nextPost.slug}`}
-            class="flex-1 rounded-lg border border-gray-200 dark:border-gray-800 p-6 text-right hover:border-primary-600 dark:hover:border-primary-400 transition-colors"
+            class="group relative p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 overflow-hidden text-right"
           >
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Next</p>
-            <p class="font-semibold text-gray-900 dark:text-gray-100">{nextPost.data.title}</p>
+            <div class="absolute inset-0 bg-gradient-to-l from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-transparent transition-all duration-300"></div>
+            <div class="relative">
+              <p class="flex items-center justify-end gap-2 text-sm text-gray-500 dark:text-gray-500 mb-2">
+                下一篇
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </p>
+              <p class="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{nextPost.data.title}</p>
+            </div>
           </a>
         ) : (
-          <div class="flex-1"></div>
+          <div></div>
         )}
       </nav>
+
+      <RelatedPosts
+        currentTags={postTags}
+        currentSlug={post.slug}
+        limit={3}
+      />
+
+      <GiscusComments />
     </div>
   </article>
 </Layout>

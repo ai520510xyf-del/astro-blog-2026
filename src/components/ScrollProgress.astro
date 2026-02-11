@@ -1,0 +1,179 @@
+---
+interface Props {
+  height?: number;
+  color?: string;
+  backgroundColor?: string;
+  animationSpeed?: number;
+  visible?: boolean;
+  shadow?: boolean;
+  borderRadius?: number;
+}
+
+const { 
+  height = 4, 
+  color = 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500',
+  backgroundColor = 'bg-gray-100 dark:bg-gray-900',
+  animationSpeed = 1.5,
+  visible = true,
+  shadow = true,
+  borderRadius = 2 
+} = Astro.props;
+---
+
+{!visible && (
+  <div 
+    id="scroll-progress" 
+    class="fixed top-0 left-0 right-0 z-[9999] opacity-0 pointer-events-none transition-opacity duration-300"
+    style={{
+      height: `${height}px`,
+      background: backgroundColor,
+      borderRadius: `${borderRadius}px`,
+      boxShadow: shadow ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none'
+    }}
+  >
+    <div 
+      id="scroll-progress-bar"
+      class="h-full bg-[length:200%_100%] animate-gradient-x transition-all duration-100 ease-out"
+      style={{
+        background: `linear-gradient(90deg, #3B82F6, #8B5CF6, #3B82F6)`,
+        backgroundSize: `${200 * animationSpeed}% 100%`,
+        width: '0%'
+      }}
+    ></div>
+  </div>
+)}
+
+{visible && (
+  <div 
+    id="scroll-progress" 
+    class="fixed top-0 left-0 right-0 z-[9999] opacity-100 transition-opacity duration-300"
+    style={{
+      height: `${height}px`,
+      background: backgroundColor,
+      borderRadius: `${borderRadius}px`,
+      boxShadow: shadow ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none'
+    }}
+  >
+    <div 
+      id="scroll-progress-bar"
+      class="h-full bg-[length:200%_100%] animate-gradient-x transition-all duration-100 ease-out"
+      style={{
+        background: `linear-gradient(90deg, #3B82F6, #8B5CF6, #3B82F6)`,
+        backgroundSize: `${200 * animationSpeed}% 100%`,
+        width: '0%'
+      }}
+    ></div>
+  </div>
+)}
+
+<style>
+  #scroll-progress-bar {
+    box-shadow: 
+      0 0 10px rgba(59, 130, 246, 0.5),
+      0 0 20px rgba(139, 92, 246, 0.3);
+  }
+</style>
+
+<script>
+  const progressBar = document.getElementById('scroll-progress-bar');
+  const progressContainer = document.getElementById('scroll-progress');
+  let animationFrameId: number | null = null;
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  
+  // Smooth easing function
+  function easeOutQuad(t: number): number {
+    return t * (2 - t);
+  }
+  
+  // Calculate scroll progress with enhanced precision
+  function calculateProgress(): number {
+    const scrollTop = window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const windowHeight = window.innerHeight;
+    
+    // Handle cases where documentHeight might be 0 or negative
+    if (documentHeight <= 0) {
+      return 0;
+    }
+    
+    // Calculate progress with smooth easing
+    let progress = (scrollTop / documentHeight) * 100;
+    
+    // Add subtle acceleration based on scroll velocity
+    const scrollVelocity = Math.abs(scrollTop - lastScrollY);
+    const acceleration = Math.min(scrollVelocity / 100, 0.1);
+    progress += acceleration;
+    
+    // Ensure progress stays within bounds
+    return Math.max(0, Math.min(progress, 100));
+  }
+  
+  // Throttled update function using requestAnimationFrame
+  function updateProgress() {
+    if (!ticking) {
+      animationFrameId = requestAnimationFrame(() => {
+        const progress = calculateProgress();
+        
+        if (progressBar) {
+          // Apply easing for smoother animation
+          const easedProgress = easeOutQuad(progress / 100);
+          progressBar.style.width = `${easedProgress * 100}%`;
+          
+          // Add subtle glow effect at higher progress
+          if (progress > 50) {
+            progressBar.style.boxShadow = `0 0 ${progress / 10}px rgba(59, 130, 246, 0.5)`;
+          } else {
+            progressBar.style.boxShadow = 'none';
+          }
+        }
+        
+        lastScrollY = window.scrollY;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+  
+  // Enhanced scroll event handling with passive option for better performance
+  const throttledUpdateProgress = () => {
+    if (!ticking) {
+      requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  };
+  
+  // Listen for various scroll events for comprehensive coverage
+  window.addEventListener('scroll', throttledUpdateProgress, { passive: true });
+  window.addEventListener('resize', throttledUpdateProgress, { passive: true });
+  
+  // Handle page visibility changes for performance optimization
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // Pause animations when tab is not visible
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    } else {
+      // Resume animations when tab becomes visible
+      updateProgress();
+    }
+  });
+  
+  // Handle page unload to clean up event listeners
+  window.addEventListener('beforeunload', () => {
+    window.removeEventListener('scroll', throttledUpdateProgress);
+    window.removeEventListener('resize', throttledUpdateProgress);
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+  });
+  
+  // Initial progress calculation
+  if (document.readyState === 'complete') {
+    updateProgress();
+  } else {
+    document.addEventListener('DOMContentLoaded', updateProgress);
+  }
+</script>

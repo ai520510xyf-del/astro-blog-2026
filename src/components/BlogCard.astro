@@ -17,6 +17,9 @@ interface Props {
 
 const { post, featured = false, index = 0 } = Astro.props;
 
+// Base path for GitHub Pages deployment
+const basePath = '/astro-blog-2026/';
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('zh-CN', {
@@ -34,7 +37,7 @@ const formatReadTime = (readTime: string) => {
 const staggerDelay = index * 80;
 ---
 
-<article 
+<article
   class:list={[
     'blog-card group relative',
     featured ? 'md:col-span-2 md:row-span-2' : ''
@@ -43,7 +46,7 @@ const staggerDelay = index * 80;
   data-magnetic
   style={`--stagger-delay: ${staggerDelay}ms`}
 >
-  <a href={`/blog/${post.slug}`} class="card-inner block h-full">
+  <a href={`${basePath}blog/${post.slug}`} class="card-inner block h-full">
     <!-- Animated glow border with conic gradient -->
     <div class="glow-border"></div>
     

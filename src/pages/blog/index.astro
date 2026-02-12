@@ -50,12 +50,15 @@ const paginationItems = Array.from({ length: totalPages }, (_, i) => {
   return { page, isActive, showPage, showDots };
 }).filter(item => item.showPage || item.showDots);
 
+// Base path for GitHub Pages deployment
+const basePath = '/astro-blog-2026/';
+
 function getPageUrl(page: number) {
   const params = new URLSearchParams();
   if (selectedTag) params.set('tag', selectedTag);
   if (page > 1) params.set('page', page.toString());
   const queryString = params.toString();
-  return queryString ? `?${queryString}` : '/blog/';
+  return queryString ? `${basePath}blog/?${queryString}` : `${basePath}blog/`;
 }
 ---
 

@@ -12,6 +12,9 @@ interface Props {
 
 const { currentTags, currentSlug, limit = 3 } = Astro.props;
 
+// Base path for GitHub Pages deployment
+const basePath = '/astro-blog-2026/';
+
 // 获取所有文章
 import { getCollection } from 'astro:content';
 
@@ -44,7 +47,7 @@ const hasRelatedPosts = postsWithScore.length > 0;
     <div class="related-posts-grid">
       {postsWithScore.map(({ post }) => (
         <a
-          href={`/blog/${post.slug}`}
+          href={`${basePath}blog/${post.slug}`}
           class="related-post-card"
           aria-label={`阅读 ${post.data.title}`}
         >

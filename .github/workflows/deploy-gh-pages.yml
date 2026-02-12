@@ -26,7 +26,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Build
-        run: astro build
+        run: npx astro build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

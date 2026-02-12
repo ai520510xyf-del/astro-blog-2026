@@ -18,7 +18,7 @@ export default defineConfig({
     }),
   ],
   site: import.meta.env.SITE_URL || 'https://your-domain.com',
-  base: import.meta.env.BASE_PATH || '/',
+  base: '/astro-blog-2026/',
   build: {
     format: 'directory',
   },

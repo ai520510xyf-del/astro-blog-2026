@@ -12,8 +12,7 @@
     "format:check": "prettier -c .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "type-check": "astro check",
-    "prepare": "husky install"
+    "type-check": "astro check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

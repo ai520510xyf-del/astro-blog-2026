@@ -10,6 +10,9 @@ const {
   subtitle = "博客",
   description = "探索技术、分享思想、记录软件开发之旅。使用 Astro 构建，追求极致性能。"
 } = Astro.props;
+
+// Base path for GitHub Pages deployment
+const basePath = '/astro-blog-2026/';
 ---
 
 <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -70,7 +73,7 @@ const {
     <!-- CTA Buttons -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up animation-delay-300">
       <a
-        href="/blog"
+        href={`${basePath}blog`}
         class="group relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-white overflow-hidden transition-all duration-300 hover:scale-105"
       >
         <span class="absolute inset-0 bg-gradient-to-r from-primary-600 to-accent-600"></span>
@@ -83,9 +86,9 @@ const {
           </svg>
         </span>
       </a>
-      
+
       <a
-        href="/about"
+        href={`${basePath}about`}
         class="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 hover:scale-105 backdrop-blur-sm"
       >
         关于我

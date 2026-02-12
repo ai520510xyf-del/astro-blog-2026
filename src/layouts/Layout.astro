@@ -2,6 +2,9 @@
 import SEO from '../components/SEO.astro';
 import '../styles/global.css';
 
+// Base path for GitHub Pages deployment
+const basePath = '/astro-blog-2026/';
+
 interface Props {
   title?: string;
   description?: string;
@@ -45,7 +48,7 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- RSS Feed auto-discovery -->
-    <link rel="alternate" type="application/rss+xml" title={title} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={title} href={`${basePath}rss.xml`} />
 
     <!-- View Transitions API -->
     <meta name="view-transition" content="same-origin" />
@@ -87,7 +90,7 @@ const {
           <div class="flex h-16 items-center justify-between">
             <!-- Logo 带缩放进入动画 -->
             <a 
-              href="/" 
+              href={`${basePath}`} 
               class="flex items-center space-x-2 group animate-blur-in"
               style="animation-delay: 100ms;"
             >
@@ -99,19 +102,19 @@ const {
             <div class="flex items-center gap-4">
               <nav class="hidden md:flex items-center space-x-6 animate-fade-in" style="animation-delay: 200ms;">
                 <a 
-                  href="/" 
+                  href={`${basePath}`}
                   class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
                 >
                   首页
                 </a>
                 <a 
-                  href="/blog" 
+                  href={`${basePath}blog`}
                   class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
                 >
                   博客
                 </a>
                 <a 
-                  href="/about" 
+                  href={`${basePath}about`}
                   class="nav-link text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all after:duration-300 hover:after:w-full"
                 >
                   关于
@@ -173,9 +176,9 @@ const {
           class="md:hidden hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
         >
           <nav class="container mx-auto px-4 py-4 flex flex-col space-y-3">
-            <a href="/" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">首页</a>
-            <a href="/blog" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">博客</a>
-            <a href="/about" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">关于</a>
+            <a href={`${basePath}`} class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">首页</a>
+            <a href={`${basePath}blog`} class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">博客</a>
+            <a href={`${basePath}about`} class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-2">关于</a>
           </nav>
         </div>
       </header>
@@ -209,7 +212,7 @@ const {
                 GitHub
               </a>
               <a 
-                href="/rss.xml" 
+                href={`${basePath}rss.xml`} 
                 class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 hover:-translate-y-0.5"
               >
                 RSS
